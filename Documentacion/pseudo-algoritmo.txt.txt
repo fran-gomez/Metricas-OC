@@ -1,0 +1,38 @@
+start:
+  si cant_arg_entrada = 0
+    parse_stdin
+  sino si cant_arg_entrada = 1
+    si arg = '-h'
+      print_help
+    sino si arg = nombre_archivo
+      un_arg
+    sino (arg es un - y cualquier otro caracter)
+      exit
+  sino si cat_arg_entrada = 2
+    dos_arg
+
+
+parse_stdin:
+  leo el input del usuario
+  escribo el input en un archivo temporal
+  in_file <- archivo temporal
+  parse
+
+un_arg:
+  abro el archivo de entrada
+  in_file <- archivo de entrada
+  out_file <- consola
+  parse
+
+dos_arg:
+  abro el archivo de entrada
+  in_file <- archivo de entrada
+  abro el archivo de salida
+  out_file <- archivo de salida
+  parse
+
+parse:
+  calculo las metricas de in_file
+  cuando el archivo se termino:
+    imprimo las metricas en out_file
+  salida sin error
