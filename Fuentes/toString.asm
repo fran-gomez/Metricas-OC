@@ -18,10 +18,10 @@ section .data
 section .bss
 
 	;Buffers para los contadores (luego imprimimos estos)
-	buffer_letras resb 6
-	buffer_palabras resb 6
-	buffer_lineas resb 6
-	buffer_parrafos resb 6
+	buffer_letras resb 8  ; Buffer de 16 bytes para el contador de letras
+	buffer_palabras resb 8; Buffer de 16 bytes para el contrador de palabras
+	buffer_lineas resb 8  ; Buffer de 16 bytes para el contador de lineas
+	buffer_parrafos resb 8; Buffer de 16 bytes para el contador de parrafos
 
 section .text
 	global toString
@@ -30,7 +30,7 @@ section .text
     ;EBX es un contador que lleva la cuenta de la cantidad de digitos de AX
     ;ESI mantiene la direccion del buffer de letras/palabras/lineas/parrafos
     ;llamamos a obtener_string que:
-	    ;1°: guarda cada uno de los digitos de AX en la pila
+	    ;1°: guarda cada uno de los digitos de EAX en la pila
     	;2°: hace un jmp a guardar_en_buffer
     	;3°: guardar_en_buffer hace pop a cada uno de los digitos en la pila
     	;4°: mientras 'popea' estos digitos les suma 0x30 para obtener el codigo ASCII
@@ -38,22 +38,22 @@ section .text
     	;6°: una vez guardado en el buffer correspondiente retorna
     	;7°: volvemos a hacer lo mismo con los otros contadores (4 veces en total)
 	toString:
-		mov EAX, [cnt_letra]	  ;guardo en AX la direccion cant_letras
+		mov EAX, [cnt_letra]	  ;guardo en EAX la direccion cant_letras
 		mov EBX, 0 		          ;inicializo el contador para llevar la cuenta de la cantidad de digitos del contador
 		mov ESI, buffer_letras    ;ESI va a mantener la direccion del buffer_letras
 		call obtener_string	      ;obtengo el string y lo guardo en buffer_letras
 
-		mov EAX, [cnt_palabra]	  ;guardo en AX la direccion cant_palabras
+		mov EAX, [cnt_palabra]	  ;guardo en EAX la direccion cant_palabras
 		mov EBX, 0 		          ;inicializo el contador para llevar la cuenta de la cantidad de digitos del contador
 		mov ESI, buffer_palabras  ;ESI va a mantener la direccion del buffer_palabras
 		call obtener_string	      ;obtengo el string y lo guardo en buffer_letras
 
-		mov EAX, [cnt_linea]	  ;guardo en AX la direccion cant_lineas
+		mov EAX, [cnt_linea]	  ;guardo en EAX la direccion cant_lineas
 		mov EBX, 0 		          ;inicializo el contador para llevar la cuenta de la cantidad de digitos del contador
 		mov ESI, buffer_lineas    ;ESI va a mantener la direccion del buffer_lineas
 		call obtener_string	      ;obtengo el string y lo guardo en buffer_lineas
 
-		mov EAX, [cnt_parrafo]	  ;guardo en AX la direccion cant_parrafos
+		mov EAX, [cnt_parrafo]	  ;guardo en EAX la direccion cant_parrafos
 		mov EBX, 0 		          ;inicializo el contador para llevar la cuenta de la cantidad de digitos del contador
 		mov ESI, buffer_parrafos  ;ESI va a mantener la direccion del buffer_parrafos
 		call obtener_string	      ;obtengo el string y lo guardo en buffer_parrafos
@@ -102,7 +102,7 @@ section .text
 		mov EAX, 4	        ;sys_write
 		mov EBX, [out_file]
 		mov ECX, buffer_letras
-		mov EDX, 4
+		mov EDX, 8
 		int 0x80
 
 		;imprimimos " Palabras:"
@@ -116,7 +116,7 @@ section .text
 		mov EAX, 4	;sys_write
 		mov EBX, [out_file]
 		mov ECX, buffer_palabras
-		mov EDX, 4
+		mov EDX, 8
 		int 0x80
 
 		;imprimimos " Lineas:"
@@ -130,7 +130,7 @@ section .text
 		mov EAX, 4	;sys_write
 		mov EBX, [out_file]
 		mov ECX, buffer_lineas
-		mov EDX, 4
+		mov EDX, 8
 		int 0x80
 
 		;imprimimos " Parrafos:"
@@ -144,7 +144,7 @@ section .text
 		mov EAX, 4	;sys_write
 		mov EBX, [out_file]
 		mov ECX, buffer_parrafos
-		mov EDX, 4
+		mov EDX, 8
 		int 0x80
 
 		;imprimimos un enter (no es muy optimo)

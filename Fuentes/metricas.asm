@@ -49,7 +49,10 @@ section .text
 ;############################
   ; Establecimiento de archivos sin argumentos de entrada
   no_arg:
-    jmp parse_stdin
+    mov [in_file], BYTE stdin
+    mov [out_file], BYTE stdout
+
+    jmp parse
 
 
   ; Establecimiento de archivos con un solo argumento
