@@ -4,7 +4,7 @@ section .text
   ; Apertura de archivo
   ; Requiere puntero al nombre del archivo en EBX
   ; Requiere modo de apertura en el tope de la pila
-  ; Asegura  descriptor de archivo en EAX
+  ; Asegura  codigo de retorno en EAX
   open_file:
     pop EDX   ; Guardamos la direccion de retorno en EDX
 
@@ -23,3 +23,7 @@ section .text
     mov EAX, 6; sys_close
     pop EBX   ; Descriptor del archivo en tope de pila
     int 0x80
+
+    ; Si sys_close nos devuelve un valor negativo, se produjo un error
+    cmp EAX, 0
+      jl unknown_error

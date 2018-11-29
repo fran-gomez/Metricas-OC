@@ -1,7 +1,8 @@
 section .data
 
   help_msg db "Error. Argumento invalido", 0xa
-           db 0x9,"Uso: metricas [-h] | [archivo_entrada | archivo_salida]", 0xa
+           db 0x9,"Uso: metricas [-h] | [archivo_entrada | archivo_salida]", 0xa, 0xa
+
            db "Metricas es un programa encargado de contar la cantidad de letras, palabras, lineas y parrafos de una secuencia.",0xa
            db "Segun el tipo y cantidad de los argumentos de entrada, varia la funcionalidad del mismo, siendo...",0xa,0xa
 
@@ -30,6 +31,5 @@ section .text
     int 0x80
 
     ; Salimos sin error
-    push no_err
-    jmp  exit
+    jmp no_error
 

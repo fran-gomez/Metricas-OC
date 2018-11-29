@@ -36,13 +36,12 @@ section .text
     ; Si estamos aca, el argumento inicia con '-'
     mov dl, BYTE [EBX+1]
     cmp dl, 0x68; Comparamos el segundo caracter del argumento con 'h'
-      push unknown_err; Ponemos un codigo de error desconocido en el tope de la pila
-      jne exit
+      jne unknown_error; Tenemos un error de argumento
 
     mov dl, BYTE [EBX+2]
     cmp dl, 0x0; Verificamos si el argumento termino, o hay algo mas
       je  print_help
-      jne exit
+      jne unknown_error
 
 ;############################
 ;     Rutinas Auxiliares    #
@@ -59,8 +58,13 @@ section .text
   ; Requiere puntero al nombre del archivo en EBX
   un_arg:
     push ro_mode
-    call open_file                ; Abrimos el archivo en solo lectura
+    call open_file             ; Abrimos el archivo en solo lectura
+
+    ; Si hubo error en la apertura de archivo, terminamos la ejecucion con el codigo correspondiente
+    cmp EAX, 0
+      jle input_error
     mov [in_file], EAX         ; Guardamos el descriptor del archivo de entrada
+
     mov [out_file], BYTE stdout; Establecemos la salida como stdout
 
     jmp parse
@@ -71,11 +75,19 @@ section .text
     pop  EBX; Recupero el puntero al nombre del primer archivo
     push ro_mode
     call open_file
-    mov  [in_file], EAX
+
+    ; Si hubo error en la apertura de archivo, terminamos la ejecucion con el codigo correspondiente
+    cmp EAX, 0
+      jle input_error
+    mov [in_file], EAX
 
     pop  EBX; Recupero el puntero  al nombre del segundo archivo
     push rw_mode
     call open_file
-    mov  [out_file], EAX
+
+    ; Si hubo error en la apertura de archivo, terminamos la ejecucion con el codigo correspondiente
+    cmp EAX, 0
+      jle output_error
+    mov [out_file], EAX
 
     jmp parse

@@ -23,6 +23,11 @@ section .bss
 	buffer_lineas resb 8  ; Buffer de 16 bytes para el contador de lineas
 	buffer_parrafos resb 8; Buffer de 16 bytes para el contador de parrafos
 
+	buffer_letras_len resb 4    ;Cantidad de caracteres de buffer_letras
+	buffer_palabras_len resb 4  ;Cantidad de caracteres de buffer_palabras
+	buffer_lineas_len resb 4    ;Cantidad de caracteres de buffer_lineas
+	buffer_parrafos_len resb 4  ;Cantidad de caracteres de buffer_parrafos
+
 section .text
 	global toString
 
@@ -41,21 +46,25 @@ section .text
 		mov EAX, [cnt_letra]	  ;guardo en EAX la direccion cant_letras
 		mov EBX, 0 		          ;inicializo el contador para llevar la cuenta de la cantidad de digitos del contador
 		mov ESI, buffer_letras    ;ESI va a mantener la direccion del buffer_letras
+		mov EDI, buffer_letras_len ;EDI mantiene la direccion de buffer_letras_len
 		call obtener_string	      ;obtengo el string y lo guardo en buffer_letras
 
 		mov EAX, [cnt_palabra]	  ;guardo en EAX la direccion cant_palabras
 		mov EBX, 0 		          ;inicializo el contador para llevar la cuenta de la cantidad de digitos del contador
 		mov ESI, buffer_palabras  ;ESI va a mantener la direccion del buffer_palabras
+		mov EDI, buffer_palabras_len ;EDI mantiene la direccion de buffer_palabras_len
 		call obtener_string	      ;obtengo el string y lo guardo en buffer_letras
 
 		mov EAX, [cnt_linea]	  ;guardo en EAX la direccion cant_lineas
 		mov EBX, 0 		          ;inicializo el contador para llevar la cuenta de la cantidad de digitos del contador
 		mov ESI, buffer_lineas    ;ESI va a mantener la direccion del buffer_lineas
+		mov EDI, buffer_lineas_len ;EDI mantiene la direccion de buffer_lineas_len
 		call obtener_string	      ;obtengo el string y lo guardo en buffer_lineas
 
 		mov EAX, [cnt_parrafo]	  ;guardo en EAX la direccion cant_parrafos
 		mov EBX, 0 		          ;inicializo el contador para llevar la cuenta de la cantidad de digitos del contador
 		mov ESI, buffer_parrafos  ;ESI va a mantener la direccion del buffer_parrafos
+		mov EDI, buffer_parrafos_len ;EDI mantiene la direccion de buffer_parrafos_len
 		call obtener_string	      ;obtengo el string y lo guardo en buffer_parrafos
 
 		;imprimimos todos los buffers
@@ -74,6 +83,8 @@ section .text
 		inc EBX
 		cmp EAX, 0 ;si AX es 0 entonces no hay mas digitos
 		jne obtener_string
+
+		mov [EDI], EBX ;guardamos la cantidad de caracteres que va a tener el buffer correspondiente
 
 		jmp guardar_en_buffer
 
@@ -102,7 +113,7 @@ section .text
 		mov EAX, 4	        ;sys_write
 		mov EBX, [out_file]
 		mov ECX, buffer_letras
-		mov EDX, 8
+		mov EDX, [buffer_letras_len]
 		int 0x80
 
 		;imprimimos " Palabras:"
@@ -116,7 +127,7 @@ section .text
 		mov EAX, 4	;sys_write
 		mov EBX, [out_file]
 		mov ECX, buffer_palabras
-		mov EDX, 8
+		mov EDX, [buffer_palabras_len]
 		int 0x80
 
 		;imprimimos " Lineas:"
@@ -130,7 +141,7 @@ section .text
 		mov EAX, 4	;sys_write
 		mov EBX, [out_file]
 		mov ECX, buffer_lineas
-		mov EDX, 8
+		mov EDX, [buffer_lineas_len]
 		int 0x80
 
 		;imprimimos " Parrafos:"
@@ -144,7 +155,7 @@ section .text
 		mov EAX, 4	;sys_write
 		mov EBX, [out_file]
 		mov ECX, buffer_parrafos
-		mov EDX, 8
+		mov EDX, [buffer_parrafos_len]
 		int 0x80
 
 		;imprimimos un enter (no es muy optimo)
